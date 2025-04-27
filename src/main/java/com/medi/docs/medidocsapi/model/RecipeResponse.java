@@ -1,44 +1,26 @@
 package com.medi.docs.medidocsapi.model;
 
-import jakarta.validation.constraints.NotBlank;
-
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
-public record RecipeRequest(
-
-        @NotBlank
+public record RecipeResponse(
+        Long id,
         String fullName,
-
-        @NotBlank
         String dni,
-
-        @NotBlank
         String healthInsurance,
-
-        @NotBlank
         String affiliateNumber,
-
         Integer age,
-
         String plan,
-
-        @NotBlank
         String rp1Medication,
-
-        @NotBlank
         String rp1Diagnosis,
-
         String rp2Medication,
-
         String rp2Diagnosis,
-
         String city,
-
         LocalDate date,
-
         String doctorName,
-
-        String doctorLicenseNumber
-
+        String doctorLicenseNumber,
+        LocalDateTime createDt,
+        LocalDateTime updateDt,
+        Integer version
 ) {
 }

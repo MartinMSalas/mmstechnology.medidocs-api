@@ -1,6 +1,9 @@
 package com.medi.docs.medidocsapi.controller;
 
+
 import com.medi.docs.medidocsapi.model.RecipeRequest;
+import com.medi.docs.medidocsapi.model.RecipeResponse;
+import com.medi.docs.medidocsapi.service.RecipeService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,36 +11,25 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
-
 @RestController
 @RequestMapping("/recipes")
 public class RecipeController {
 
     private static final Logger logger = LoggerFactory.getLogger(RecipeController.class);
 
+    private final RecipeService recipeService;
+
+    public RecipeController(RecipeService recipeService) {
+        this.recipeService = recipeService;
+    }
+
     @PostMapping
     public ResponseEntity<String> createRecipe(@RequestBody @Valid RecipeRequest recipeRequest) {
+        logger.info("Received new recipe request for patient: {}", recipeRequest.fullName());
 
-        // 1. Completar valores por defecto si no vinieron
-        String city = (recipeRequest.city() != null) ? recipeRequest.city() : "Catamarca";
-        LocalDate date = (recipeRequest.date() != null) ? recipeRequest.date() : LocalDate.now();
-        String doctorName = (recipeRequest.doctorName() != null) ? recipeRequest.doctorName() : "De La Fuente";
-        String doctorLicenseNumber = (recipeRequest.doctorLicenseNumber() != null) ? recipeRequest.doctorLicenseNumber() : "1968";
+        // Save recipe using the service
+        RecipeResponse savedRecipe = recipeService.createRecipe(recipeRequest);
 
-        // 2. Loguear los datos importantes
-        logger.info("Nueva receta recibida por el paciente:");
-        logger.info("Paciente: {}", recipeRequest.fullName());
-        logger.info("Medicamento 1: {}", recipeRequest.rp1Medication());
-        if (recipeRequest.rp2Medication() != null) {
-            logger.info("Medicamento 2: {}", recipeRequest.rp2Medication());
-        }
-        logger.info("Ciudad: {}", city);
-        logger.info("Fecha: {}", date);
-        logger.info("Doctor: {}", doctorName);
-        logger.info("Matrícula: {}", doctorLicenseNumber);
-
-        // 3. Retornar respuesta simple
-        return ResponseEntity.status(HttpStatus.CREATED).body("Receta procesada exitosamente.");
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedRecipe.toString());
     }
 }
