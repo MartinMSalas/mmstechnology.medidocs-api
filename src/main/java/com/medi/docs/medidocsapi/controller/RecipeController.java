@@ -26,7 +26,7 @@ public class RecipeController {
         String doctorLicenseNumber = (recipeRequest.doctorLicenseNumber() != null) ? recipeRequest.doctorLicenseNumber() : "1968";
 
         // 2. Loguear los datos importantes
-        logger.info("Nueva receta recibida :");
+        logger.info("Nueva receta recibida por el paciente:");
         logger.info("Paciente: {}", recipeRequest.fullName());
         logger.info("Medicamento 1: {}", recipeRequest.rp1Medication());
         if (recipeRequest.rp2Medication() != null) {
