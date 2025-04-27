@@ -1,0 +1,68 @@
+openapi: 3.0.3
+info:
+  title: MediDocs API
+  version: 1.0.0
+  description: API REST to create medical prescriptions in PDF and send by email.
+
+paths:
+  /recipes:
+    post:
+      summary: Create a new medical recipe
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecipeRequest'
+      responses:
+        '201':
+          description: Recipe created successfully
+        '400':
+          description: Invalid request data
+
+components:
+  schemas:
+    RecipeRequest:
+      type: object
+      required:
+        - fullName
+        - dni
+        - healthInsurance
+        - affiliateNumber
+        - rp1Medication
+        - rp1Diagnosis
+      properties:
+        fullName:
+          type: string
+        dni:
+          type: string
+        healthInsurance:
+          type: string
+        affiliateNumber:
+          type: string
+        age:
+          type: integer
+          format: int32
+        plan:
+          type: string
+        rp1Medication:
+          type: string
+        rp1Diagnosis:
+          type: string
+        rp2Medication:
+          type: string
+        rp2Diagnosis:
+          type: string
+        city:
+          type: string
+          default: "Catamarca"
+        date:
+          type: string
+          format: date
+          description: "If not provided, the system date will be used."
+        doctorName:
+          type: string
+          default: "De La Fuente"
+        doctorLicenseNumber:
+          type: string
+          default: "1968"
