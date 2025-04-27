@@ -10,6 +10,12 @@ import com.medi.docs.medidocsapi.util.PdfGenerator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 @Service
 public class RecipeServiceImpl implements RecipeService {
 
@@ -28,19 +34,50 @@ public class RecipeServiceImpl implements RecipeService {
         // Save the entity to the database
         RecipeEntity savedEntity = recipeRepository.save(recipeEntity);
 
-        // Map to response
+        // Map the saved entity to RecipeResponse
         RecipeResponse response = RecipeMapper.toResponse(savedEntity);
 
-        // Generate the PDF automatically
+        // Generate PDF based on RecipeResponse
         byte[] pdfContent = PdfGenerator.generateRecipePdf(response);
 
-        // Here, you can now use pdfContent to send by email (future step)
-        sendRecipeByEmail(response, pdfContent);
+        // Save the generated PDF to disk
+        savePdfToDisk(pdfContent, savedEntity.getId());
+
+        // (Future) Send the PDF by email to the user and admin
+        // sendRecipeByEmail(response, pdfContent);
 
         return response;
     }
 
+    /**
+     * Saves the generated PDF to the disk in the 'pdfs' directory.
+     *
+     * @param pdfContent the content of the PDF
+     * @param recipeId   the ID of the saved recipe
+     */
+    private void savePdfToDisk(byte[] pdfContent, Long recipeId) {
+        try {
+            Path pdfDirectory = Paths.get("pdfs");
+            if (!Files.exists(pdfDirectory)) {
+                Files.createDirectories(pdfDirectory); // Create directory if it doesn't exist
+            }
+
+            Path pdfPath = pdfDirectory.resolve("recipe-" + recipeId + ".pdf");
+            try (FileOutputStream fos = new FileOutputStream(pdfPath.toFile())) {
+                fos.write(pdfContent);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to save PDF to disk", e);
+        }
+    }
+
+    /**
+     * Placeholder method to send the PDF by email.
+     *
+     * @param recipe     the recipe information
+     * @param pdfContent the generated PDF content
+     */
     private void sendRecipeByEmail(RecipeResponse recipe, byte[] pdfContent) {
-        // TODO: Implement email sending here
+        // TODO: Implement Email sending here
     }
 }
